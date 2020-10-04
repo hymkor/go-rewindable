@@ -57,3 +57,24 @@ func TestSeekStart(t *testing.T) {
 		t.Fatal("failed: SeekStart backward")
 	}
 }
+
+func TestSeekCurrent(t *testing.T) {
+	srcReader := strings.NewReader(`1
+2
+3
+4
+5
+`)
+	var buffer [2]byte
+	var r io.ReadSeeker = NewReader(srcReader)
+	r.Seek(8, io.SeekCurrent)
+	r.Read(buffer[:])
+	if buffer[0] != '5' {
+		t.Fatalf("failed: SeekCurrent forward (expect '4' but '%c')", buffer[0])
+	}
+	r.Seek(-4, io.SeekCurrent)
+	r.Read(buffer[:])
+	if buffer[0] != '4' {
+		t.Fatalf("failed: SeekCurrent backward (expect '3' but '%c')", buffer[0])
+	}
+}

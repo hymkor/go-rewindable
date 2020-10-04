@@ -60,11 +60,18 @@ func (this *Reader) seekStart(pos int64) (int64, error) {
 	}
 }
 
+func (this *Reader) seekCurrent(pos int64) (int64, error) {
+	return this.seekStart(
+		int64(len(this.pastBuffer)+this.tmpBuffer.Len()) + pos)
+}
+
 func (this *Reader) Seek(offset int64, whence int) (int64, error) {
 	switch whence {
 	default:
 		return 0, fmt.Errorf("not support: %d", whence)
 	case io.SeekStart:
 		return this.seekStart(offset)
+	case io.SeekCurrent:
+		return this.seekCurrent(offset)
 	}
 }
